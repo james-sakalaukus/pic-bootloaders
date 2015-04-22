@@ -36,16 +36,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#ifdef WIN32
-typedef enum
-{
-    false,
-    true
-}
-bool;
-#else /* WIN32 */
 #include <stdbool.h>
-#endif /* WIN32 */
 
 #include "intelhex.h"
 

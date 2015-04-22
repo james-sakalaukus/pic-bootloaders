@@ -1,38 +1,18 @@
 	radix DEC
-	LIST      P=18F2550	; change also: Configure->SelectDevice from Mplab
-; 20MHzQuartz / 5 * 24 / 4 => 24MHz	; check _CONFIG1
-xtal EQU 24000000		; 'xtal' here is resulted frequency (is no longer quartz frequency)
-baud EQU 57600			; the desired baud rate
-	
-	;********************************************************************
-	;	Tiny Bootloader		18F*55 series		Size=100words
-	;	claudiu.chiculita@ugal.ro
-	;	http://www.etc.ugal.ro/cchiculita/software/picbootloader.htm
-	;********************************************************************
-	;	     |	12kW	16kW
-	;	-----+----------------
-	;	28pin|	2455	2550
-	;	40pin|	4455	4550
-	#include "icdpictypes.inc"	;takes care of: #include "p18fxxx.inc",  max_flash, IdTypePIC
-	#include "spbrgselect.inc"	; RoundResult and baud_rate
+	LIST      P=18F46k80
 
-	CONFIG	PLLDIV = 1           ;No prescale (4 MHz oscillator input drives PLL directly)
-	CONFIG	CPUDIV = OSC3_PLL4   ;[OSC1/OSC2 Src: /3][96 MHz PLL Src: /4]
-	CONFIG	FOSC = HSPLL_HS      ;XT oscillator, PLL enabled, XT used by USB
-	CONFIG	PWRT = ON            ;PWRT enabled
-	CONFIG	FCMEN = OFF          ;Fail-Safe Clock Monitor disabled
-	CONFIG	IESO = OFF           ;Oscillator Switchover mode disabled
-	CONFIG	WDT = OFF            ;HW Disabled - SW Controlled
-	CONFIG	BOR = ON             ;Brown-out Reset enabled in hardware only (SBOREN is disabled)
-	CONFIG	BORV = 0             ;Maximum setting
-	CONFIG	VREGEN = OFF         ;USB voltage regulator disabled
-	CONFIG	MCLRE = ON           ;MCLR pin enabled; RE3 input pin disabled
-	CONFIG	LVP = OFF            ;Single-Supply ICSP disabled
-	CONFIG	XINST = OFF          ;Instruction set extension and Indexed Addressing mode disabled (Legacy mode)
-	CONFIG	STVREN = ON          ;Stack full/underflow will cause Reset
-	CONFIG  PBADEN = OFF         ;PORTB<4:0> pins are configured as digital I/O on Reset
-	CONFIG	CCP2MX = ON          ;CCP2 input/output is multiplexed with RC1
-	CONFIG	LPT1OSC = OFF        ;Timer1 configured for higher power operation
+
+xtal EQU 16000000		; 16 MHz
+baud EQU 115200			; the desired baud rate
+
+;
+spbrg_value EQU 34
+
+#include "p18f46k80.inc"
+IdTypePIC = 0x4F
+#define max_flash 0x10000
+
+
 
 	CONFIG	DEBUG = OFF
 	CONFIG CP0 = ON
@@ -97,12 +77,19 @@ VIntL
 ;PIC_response:	   type `K`
 	
 IntrareBootloader
+
+	; FIX for UART2 with High speed mode!
+
 	;skip TRIS to 0 C6			;init serial port
 	movlw b'00100100'
 	movwf TXSTA
+
 	;use only SPBRG (8 bit mode default) not using BAUDCON
 	movlw spbrg_value
 	movwf SPBRG
+
+
+
 	movlw b'10010000'
 	movwf RCSTA
 						;wait for computer

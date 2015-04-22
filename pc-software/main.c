@@ -29,17 +29,8 @@
 
 #include <assert.h>
 #include <ctype.h>
-#ifdef WIN32
-typedef enum
-{
-    false,
-    true
-}
-bool;
-#else /* WIN32 */
 #include <unistd.h>
 #include <stdbool.h>
-#endif /* WIN32 */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

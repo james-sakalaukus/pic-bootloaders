@@ -24,10 +24,3 @@ spbrg_value EQU RoundResult-1
 	Round xtal,(16*(spbrg_value+1))
 baud_real EQU RoundResult
 	Abs(baud_real-baud)
-errpercent EQU AbsResult*100/baud
-	if errpercent > 4
-		ERROR big error in baudrate: #v(errpercent)%
-	endif
-	if errpercent >= 2
-		messg baudrate not exact: #v(errpercent)%
-	endif
